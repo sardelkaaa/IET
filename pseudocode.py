@@ -133,15 +133,21 @@ def main():
     # Выводим список рекомендованных курсов
     print(f'Профессия: {profession['name']}')
 
-    for recommended_course in recommended_courses:
-        print(f"Компетенция: {recommended_course['competency']['name']}, Курс: {recommended_course['name']}, Вес: {recommended_course['weight']}")
+    if recommended_courses:
+        for recommended_course in recommended_courses:
+            print(f"Компетенция: {recommended_course['competency']['name']}, Курс: {recommended_course['name']}, Вес: {recommended_course['weight']}")
+    else:
+        print('В базе данных нет рекомендованных курсов для выбранной профессии')
     print()
 
     discipline_courses = recommend_course_for_discipline(profession, competencies, courses, discipline)
 
     print(f'Дисциплина: {discipline['name']}')
-    for discipline_course in discipline_courses:
-        print(f"Курс: {discipline_course['name']} в рамках компетенции {discipline_course['competency']['name']} с весом {discipline_course['weight']}")
+    if discipline_courses:
+        for discipline_course in discipline_courses:
+            print(f"Компетенция: {discipline_course['name']}, Курс: {discipline_course['competency']['name']}, Вес: {discipline_course['weight']}")
+    else:
+        print('В базе данных нет рекомендованных курсов для выбранной профессии в рамках выбранной дисциплины')
 
 
 if __name__ == '__main__':
