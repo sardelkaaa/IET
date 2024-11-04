@@ -86,10 +86,24 @@ def init_db():
     return supabase
 
 
+def get_profession_by_name(supabase):
+    """Делает поиск профессий и их id в базе данных."""
+    profession = input('Введите имя профессии: ')
+    response = (supabase.table('professions')
+                    .select('id, name')
+                    .ilike('name', f"%{profession}%")
+                    .execute())
+    if response.data:
+        for profession in response.data:
+            print(profession)
+    else:
+        print('Профессия не найдена в базе данных')
+
+
 # Тестируем функцию
 def main():
     supabase = init_db()
-
+    get_profession_by_name(supabase)
     profession_id = int(input('Id of the profession: '))
     discipline_id = int(input('Id of the discipline: '))
 
