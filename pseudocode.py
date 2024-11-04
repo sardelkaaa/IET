@@ -86,33 +86,7 @@ def init_db():
     return supabase
 
 
-# professions = {
-#     1: {'name': 'Data Scientist', 'tags': ['python', 'statistics', 'machine learning', 'programming basics', 'data analysis']},
-#     2: {'name': 'Web Developer', 'tags': ['html', 'css', 'javascript', 'react']},
-#     3: {'name': 'Backend Go Developer', 'tags': ['go']}
-# }
-#
-# competencies = {
-#     1: {'name': 'Python Programming', 'tags': ['python', 'data analysis']},
-#     2: {'name': 'Frontend Development', 'tags': ['html', 'css', 'javascript']},
-#     3: {'name': 'Backend Development', 'tags': ['database']},
-#     4: {'name': 'Base Programming', 'tags': ['programming basics']},
-#     5: {'name': 'Data Science', 'tags': ['machine learning', 'statistics', 'data analysis']},
-# }
-#
-# courses = {
-#     1: {'name': 'Introduction to Python', 'tags': ['programming basics'], 'discipline_id': None},
-#     2: {'name': 'Advanced Web Development', 'tags': ['javascript', 'react', 'html'], 'discipline_id': 1},
-#     3: {'name': 'Data Science Course', 'tags': ['python', 'machine learning', 'statistics', 'data analysis'], 'discipline_id': 1},
-# }
-#
-# disciplines = {
-#     1: {'name': 'Современные языки программирования'}
-# }
-#
-
 # Тестируем функцию
-
 def main():
     supabase = init_db()
 
