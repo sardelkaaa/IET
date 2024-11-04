@@ -3,7 +3,7 @@
 
 import os
 from dotenv import load_dotenv
-from supabase import create_client
+from supabase import create_client, Client
 
 
 def get_common_tags(tags1, tags2):
@@ -16,7 +16,7 @@ def get_linking_profession_to_competency(profession, data_of_competencies):
     """Получение связанных профессий и компетенций."""
     matched_competencies = []
     for competency in data_of_competencies:
-        common_tags, weight = get_common_tags(profession[0]['tags'], competency['tags'])
+        common_tags, weight = get_common_tags(profession['tags'], competency['tags'])
         if common_tags:
             matched_competencies.append(
                 {
@@ -59,7 +59,7 @@ def recommend_courses(profession, competencies, courses, discipline=None):
     for competency in matched_competencies:
         matched_courses = get_linking_competency_to_course(competency, courses)
 
-        if discipline:  # если был передан фильтр принадлежности курсов дисциплине
+        if discipline:  # если был передан фильтр принадлежности курсов дисциплине, то оставляем только курсы связанные с дисциплиной
             matched_courses = list(filter(lambda x: x['discipline_id'] == discipline, matched_courses))
         for match_course in matched_courses:
             match_course['weight'] += competency['weight']
@@ -119,11 +119,11 @@ def main():
     profession_id = int(input('Id of the profession: '))
     discipline_id = int(input('Id of the discipline: '))
 
-    professions = supabase.table('professions').select('*')
-    profession = professions.eq('id', profession_id).execute().data  # Алгоритм поиска профессии по id в таблице
+    # Алгоритм поиска профессии по id в таблице
+    profession = supabase.table('professions').select('*').eq('id', profession_id).execute().data[0]
 
-    disciplines = supabase.table('disciplines').select('*')
-    discipline = disciplines.eq('id', discipline_id).execute().data # Алгоритм поиска дисциплины по id в таблице
+    # Алгоритм поиска дисциплины по id в таблице
+    discipline = supabase.table('disciplines').select('*').eq('id', discipline_id).execute().data[0]
 
     competencies = supabase.table('competencies').select('*').execute().data
     courses = supabase.table('courses').select('*').execute().data
@@ -131,7 +131,7 @@ def main():
     recommended_courses = recommend_courses_for_profession(profession, competencies, courses)
 
     # Выводим список рекомендованных курсов
-    print(f'Профессия: {profession[0]['name']}')
+    print(f'Профессия: {profession['name']}')
 
     for recommended_course in recommended_courses:
         print(f"Компетенция: {recommended_course['competency']['name']}, Курс: {recommended_course['name']}, Вес: {recommended_course['weight']}")
@@ -139,7 +139,7 @@ def main():
 
     discipline_courses = recommend_course_for_discipline(profession, competencies, courses, discipline)
 
-    print(f'Дисциплина: {discipline[0]['name']}')
+    print(f'Дисциплина: {discipline['name']}')
     for discipline_course in discipline_courses:
         print(f"Курс: {discipline_course['name']} в рамках компетенции {discipline_course['competency']['name']} с весом {discipline_course['weight']}")
 
