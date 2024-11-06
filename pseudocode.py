@@ -8,8 +8,10 @@ from supabase import create_client, Client
 
 def get_common_tags(tags1, tags2):
     """Получение общих тегов из двух списков с тегами."""
-    common_tags = set(tags1).intersection(tags2)
-    return list(common_tags), len(common_tags)
+    if tags1 and tags2:
+        common_tags = set(tags1).intersection(tags2)
+        return list(common_tags), len(common_tags)
+    return [], 0
 
 
 def get_linking_profession_to_competency(profession, data_of_competencies):
@@ -94,7 +96,7 @@ def get_profession_by_name(supabase):
                     .ilike('name', f"%{profession}%")
                     .execute())
     if response.data:
-        for profession in response.data:
+        for profession in sorted(response.data, key=lambda x: x['id']):
             print(profession)
     else:
         print('Профессия не найдена в базе данных')
