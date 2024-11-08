@@ -104,18 +104,18 @@ def init_db():
     return supabase
 
 
-def get_profession_by_name(supabase):
-    """Делает поиск профессий и их id в базе данных."""
-    profession = input('Введите имя профессии: ')
-    response = (supabase.table('professions')
+def get_entity_by_name(supabase, table_name):
+    """Делает поиск сущностей и их id в базе данных."""
+    search = input(f'Введите данные для поиска в таблице {table_name}: ')
+    response = (supabase.table(table_name)
                     .select('id, name')
-                    .ilike('name', f"%{profession}%")
+                    .ilike('name', f"%{search}%")
                     .execute())
     if response.data:
-        for profession in sorted(response.data, key=lambda x: x['id']):
-            print(profession)
+        for search in sorted(response.data, key=lambda x: x['id']):
+            print(search)
     else:
-        print('Профессия не найдена в базе данных')
+        print('Не найдено в базе данных')
 
 
 def print_recommended_courses(profession_name, courses, discipline_name=None):
@@ -135,8 +135,9 @@ def print_recommended_courses(profession_name, courses, discipline_name=None):
 # Тестируем функцию
 def main():
     supabase = init_db()
-    get_profession_by_name(supabase)
+    get_entity_by_name(supabase, 'professions')
     profession_id = int(input('Id of the profession: '))
+    get_entity_by_name(supabase, 'disciplines')
     discipline_id = int(input('Id of the discipline: '))
 
     # Алгоритм поиска профессии по id в таблице
@@ -158,7 +159,9 @@ def main():
     print_recommended_courses(profession['name'], discipline_courses, discipline['name'])
 
     print()
-    discipline_ids = [8, 10, 32]
+
+    # тестовую профессию можно взять с id 123
+    discipline_ids = [8, 14, 32]
     get_top_recommended_course_for_disciplines(discipline_ids, profession, competencies, courses, supabase)
 
 
