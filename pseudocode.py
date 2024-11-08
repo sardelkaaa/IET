@@ -78,6 +78,23 @@ def recommend_course_for_discipline(profession, competencies, courses, disciplin
     return recommend_courses(profession, competencies, courses, discipline_id=discipline_id)
 
 
+def get_top_recommended_course_for_disciplines(discipline_ids, profession, competencies, courses, supabase):
+    """Получение самого рекомендуемого курса для каждой дисциплины из списка."""
+    top_courses = {}
+    for discipline_id in discipline_ids:
+        discipline_courses = recommend_course_for_discipline(profession, competencies, courses, discipline_id)
+        discipline = supabase.table('disciplines').select('name').eq('id', discipline_id).execute().data[0]
+
+        if discipline_courses:
+            top_course = discipline_courses[0]
+            top_courses[discipline['name']] = top_course['name']
+        else:
+            top_courses[discipline['name']] = 'Нет рекомендованных курсов'
+
+    for discipline_name, course_name in top_courses.items():
+        print(f'{discipline_name}: {course_name}')
+
+
 def init_db():
     """Инициализация БД."""
     load_dotenv()
@@ -139,6 +156,10 @@ def main():
     print()
     # Выводим список рекомендованных курсов в рамках дисциплины
     print_recommended_courses(profession['name'], discipline_courses, discipline['name'])
+
+    print()
+    discipline_ids = [8, 10, 32]
+    get_top_recommended_course_for_disciplines(discipline_ids, profession, competencies, courses, supabase)
 
 
 if __name__ == '__main__':
