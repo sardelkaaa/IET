@@ -80,17 +80,26 @@ def recommend_course_for_discipline(profession, competencies, courses, disciplin
 
 def get_top_recommended_course_for_disciplines(discipline_ids, profession, competencies, courses, supabase):
     """Получение самого рекомендуемого курса для каждой дисциплины из списка."""
+    response = supabase.table('disciplines').select('id, name').execute()
+    disciplines = {}
+    if response.data:
+        for discipline in response.data:
+            disciplines[discipline['id']] = discipline['name']
+    else:
+        print('Не найдено дисциплин в базе данных')
+        return
+
     top_courses = {}
     for discipline_id in discipline_ids:
         discipline_courses = recommend_course_for_discipline(profession, competencies, courses, discipline_id)
-        discipline = supabase.table('disciplines').select('name').eq('id', discipline_id).execute().data[0]
 
         if discipline_courses:
             top_course = discipline_courses[0]
-            top_courses[discipline['name']] = top_course['name']
+            top_courses[disciplines[discipline_id]] = top_course['name']
         else:
-            top_courses[discipline['name']] = 'Нет рекомендованных курсов'
+            top_courses[disciplines[discipline_id]] = 'Нет рекомендованных курсов'
 
+    print('Лучшие курсы для каждой из дисциплин:')
     for discipline_name, course_name in top_courses.items():
         print(f'{discipline_name}: {course_name}')
 
@@ -139,6 +148,7 @@ def main():
     profession_id = int(input('Id of the profession: '))
     get_entity_by_name(supabase, 'disciplines')
     discipline_id = int(input('Id of the discipline: '))
+    print()
 
     # Алгоритм поиска профессии по id в таблице
     profession = supabase.table('professions').select('*').eq('id', profession_id).execute().data[0]
@@ -157,9 +167,7 @@ def main():
     print()
     # Выводим список рекомендованных курсов в рамках дисциплины
     print_recommended_courses(profession['name'], discipline_courses, discipline['name'])
-
     print()
-
     # тестовую профессию можно взять с id 123
     discipline_ids = [8, 14, 32]
     get_top_recommended_course_for_disciplines(discipline_ids, profession, competencies, courses, supabase)
