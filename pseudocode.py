@@ -54,15 +54,15 @@ def get_linking_competency_to_course(competency, list_of_courses):
     return matched_courses
 
 
-def recommend_courses(profession, competencies, courses, discipline=None):
+def recommend_courses(profession, competencies, courses, discipline_id=None):
     """Рекомендация курсов."""
     matched_competencies = get_linking_profession_to_competency(profession, competencies)
     all_matched_courses = []
     for competency in matched_competencies:
         matched_courses = get_linking_competency_to_course(competency, courses)
 
-        if discipline:  # если был передан фильтр принадлежности курсов дисциплине, то оставляем только курсы связанные с дисциплиной
-            matched_courses = list(filter(lambda x: x['discipline_id'] == discipline, matched_courses))
+        if discipline_id:  # если был передан фильтр принадлежности курсов дисциплине, то оставляем только курсы связанные с дисциплиной
+            matched_courses = list(filter(lambda x: x['discipline_id'] == discipline_id, matched_courses))
         for match_course in matched_courses:
             match_course['weight'] += competency['weight']
         all_matched_courses.extend(matched_courses)
@@ -70,13 +70,12 @@ def recommend_courses(profession, competencies, courses, discipline=None):
 
 
 def recommend_courses_for_profession(profession, competencies, courses):
-    """Рекомендация курсов для профессии."""
     return recommend_courses(profession, competencies, courses)
 
 
-def recommend_course_for_discipline(profession, competencies, courses, discipline):
-    """Рекомендация курсов в рамках дисциплины."""
-    return recommend_courses(profession, competencies, courses, discipline=discipline)
+def recommend_course_for_discipline(profession, competencies, courses, discipline_id=None):
+    """Рекомендация курсов для профессии."""
+    return recommend_courses(profession, competencies, courses, discipline_id=discipline_id)
 
 
 def init_db():
@@ -102,6 +101,20 @@ def get_profession_by_name(supabase):
         print('Профессия не найдена в базе данных')
 
 
+def print_recommended_courses(profession_name, courses, discipline_name=None):
+    """Выводит на экран все подходящие курсы для профессии или дисциплины по убыванию веса."""
+    if discipline_name:
+        print(f'Дисциплина: {discipline_name}')
+    else:
+        print(f'Профессия: {profession_name}')
+
+    if courses:
+        for course in courses:
+            print(f"Курс: {course['name']}, Компетенция: {course['competency']['name']}, Вес: {course['weight']}")
+    else:
+        print('Рекомендованных курсов нет')
+
+
 # Тестируем функцию
 def main():
     supabase = init_db()
@@ -119,25 +132,13 @@ def main():
     courses = supabase.table('courses').select('*').execute().data
 
     recommended_courses = recommend_courses_for_profession(profession, competencies, courses)
+    discipline_courses = recommend_course_for_discipline(profession, competencies, courses, discipline_id)
 
     # Выводим список рекомендованных курсов
-    print(f'Профессия: {profession['name']}')
-
-    if recommended_courses:
-        for recommended_course in recommended_courses:
-            print(f"Компетенция: {recommended_course['competency']['name']}, Курс: {recommended_course['name']}, Вес: {recommended_course['weight']}")
-    else:
-        print('В базе данных нет рекомендованных курсов для выбранной профессии')
+    print_recommended_courses(profession['name'], recommended_courses)
     print()
-
-    discipline_courses = recommend_course_for_discipline(profession, competencies, courses, discipline)
-
-    print(f'Дисциплина: {discipline['name']}')
-    if discipline_courses:
-        for discipline_course in discipline_courses:
-            print(f"Компетенция: {discipline_course['name']}, Курс: {discipline_course['competency']['name']}, Вес: {discipline_course['weight']}")
-    else:
-        print('В базе данных нет рекомендованных курсов для выбранной профессии в рамках выбранной дисциплины')
+    # Выводим список рекомендованных курсов в рамках дисциплины
+    print_recommended_courses(profession['name'], discipline_courses, discipline['name'])
 
 
 if __name__ == '__main__':
