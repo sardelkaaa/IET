@@ -23,6 +23,7 @@ def get_linking_profession_to_competency(profession, data_of_competencies):
             matched_competencies.append(
                 {
                     'id': competency['id'],
+                    'profession_id': profession['id'],
                     'name': competency['name'],
                     'tags': competency['tags'],
                     'weight': weight
@@ -39,14 +40,12 @@ def get_linking_competency_to_course(competency, list_of_courses):
         if common_tags:
             matched_courses.append(
                 {
-                    'id': course['id'],
+                    'profession_id': competency['profession_id'],
+                    'course_id': course['id'],
+                    'competency_id': competency['id'],
                     'name': course['name'],
-                    'description': course['description'],
-                    'knowledge': course['knowledge'],
-                    'skills': course['skills'],
-                    'discipline_id': course['discipline_id'],
-                    'direction_id': course['direction_id'],
                     'competency': competency,
+                    'discipline_id': course['discipline_id'],
                     'tags': course['tags'],
                     'weight': weight
                 }
