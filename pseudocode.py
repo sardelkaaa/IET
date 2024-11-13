@@ -2,6 +2,10 @@
 # Компетенция - курс и курс - компетенция
 
 import os
+import time
+from pprint import pprint
+
+from aiohttp.helpers import proxies_from_env
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
@@ -139,16 +143,22 @@ def print_recommended_courses(profession_name, courses, discipline_name=None):
     else:
         print('Рекомендованных курсов нет')
 
+def print_recommended_courses_with_related_records(profession_data, profession_name, discipline=None):
+    """Выводит на экран все подходящие курсы для профессии или дисциплины по убыванию веса."""
+    if discipline:
+        print(f'Дисциплина: {discipline['name']}')
+    else:
+        print(f'Профессия: {profession_name}')
 
-# Тестируем функцию
-def main():
-    supabase = init_db()
-    get_entity_by_name(supabase, 'professions')
-    profession_id = int(input('Id of the profession: '))
-    get_entity_by_name(supabase, 'disciplines')
-    discipline_id = int(input('Id of the discipline: '))
-    print()
+    if profession_data:
+        for record in profession_data:
+            print(f"Курс: {record['courses']['name']}, Компетенция: {record['competencies']['name']}, Вес: {record['weight']}")
+    else:
+        print('Рекомендованных курсов нет')
 
+
+def test_tables_without_linking(supabase, profession_id, discipline_id):
+    """Тестирование алгоритма для таблиц без связей"""
     # Алгоритм поиска профессии по id в таблице
     profession = supabase.table('professions').select('*').eq('id', profession_id).execute().data[0]
 
@@ -171,6 +181,25 @@ def main():
     discipline_ids = [8, 14, 32]
     get_top_recommended_course_for_disciplines(discipline_ids, profession, competencies, courses, supabase)
 
+def test_tables_with_linking(supabase, profession_id, discipline_id):
+    """Тестирование алгоритма для связанных таблиц"""
+
+    # Получение курсов по id профессии
+    profession_data = supabase.table('profession_competency_course_links').select(
+        'professions(name), courses(name), competencies(name), weight').eq('profession_id', profession_id).execute().data
+
+    profession_name = supabase.table('professions').select('*').eq('id', profession_id).execute().data[0]['name']
+
+    print_recommended_courses_with_related_records(profession_data, profession_name)
+
+# Тестируем функцию
+def main():
+    supabase = init_db()
+    # get_entity_by_name(supabase, 'professions')
+    profession_id = int(input('Id of the profession: '))
+    # get_entity_by_name(supabase, 'disciplines')
+    discipline_id = int(input('Id of the discipline: '))
+    test_tables_with_linking(supabase, profession_id, discipline_id)
 
 if __name__ == '__main__':
     main()
