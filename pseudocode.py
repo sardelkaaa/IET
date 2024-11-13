@@ -2,10 +2,6 @@
 # Компетенция - курс и курс - компетенция
 
 import os
-import time
-from pprint import pprint
-
-from aiohttp.helpers import proxies_from_env
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
