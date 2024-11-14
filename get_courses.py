@@ -49,6 +49,35 @@ def recommend_courses_within_discipline(supabase, profession_id, discipline_id):
     print_recommended_courses_with_related_records(profession_data, profession_name, discipline_name)
 
 
+def get_top_recommended_courses_for_disciplines(supabase, profession_id, discipline_ids):
+    """Получение самого рекомендуемого курса для каждой дисциплины из списка."""
+
+    # Изначально выбираем только те дисциплины, где есть совпадения по id из списка discipline_ids
+    response = supabase.table('disciplines').select('id, name').in_('id', discipline_ids).execute()
+    disciplines = {
+        discipline['id']: discipline['name']
+        for discipline in response.data
+    }
+
+    top_courses = {}
+    for discipline_id in discipline_ids:
+        # Получаем курсы для заданной профессии и дисциплины
+        profession_data = supabase.table('profession_competency_course_links').select(
+            'courses(name), weight'
+        ).eq('profession_id', profession_id).eq('discipline_id', discipline_id
+        ).limit(1).execute().data
+
+        if profession_data:
+            top_course = profession_data[0]['courses']['name']
+            top_courses[disciplines[discipline_id]] = top_course
+        else:
+            top_courses[disciplines[discipline_id]] = 'Нет рекомендованных курсов'
+
+    print('Лучшие курсы для выбранных дисциплин:')
+    for discipline_name, course_name in top_courses.items():
+        print(f'{discipline_name}: {course_name}')
+
+
 # Тестируем функцию
 def main():
     supabase = init_db()
@@ -57,6 +86,9 @@ def main():
     recommend_courses(supabase, profession_id)
     print()
     recommend_courses_within_discipline(supabase, profession_id, discipline_id)
+    print()
+    discipline_ids = [8, 14, 32]
+    get_top_recommended_courses_for_disciplines(supabase, profession_id, discipline_ids)
 
 
 if __name__ == '__main__':

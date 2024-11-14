@@ -1,2 +1,3 @@
 .env
 __pycache__/
+find_in_table.py
