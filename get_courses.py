@@ -84,7 +84,7 @@ def get_top_recommended_courses_for_disciplines(supabase, profession_id, directi
     for discipline_id in valid_discipline_ids:
         profession_data = supabase.table('profession_competency_course_links').select(
             'courses(name), weight'
-        ).eq('profession_id', profession_id).eq('discipline_id', discipline_id).order('weight', desc=True).limit(1).execute().data
+        ).eq('profession_id', profession_id).eq('discipline_id', discipline_id).limit(1).execute().data
 
         if profession_data:
             top_course = profession_data[0]['courses']['name']
