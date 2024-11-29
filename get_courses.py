@@ -26,15 +26,17 @@ def print_recommended_courses_with_related_records(profession_data, profession_n
         print('Рекомендованных курсов нет')
 
 
-def get_available_disciplines(supabase, direction_id):
-    """Получение доступных дисциплин для направления."""
-    discipline_links = supabase.table('disciplines-directions').select('discipline_id').eq('direction_id', direction_id).execute().data
-    # Возвращем просто список из id дисциплин
-    return [link['discipline_id'] for link in discipline_links]
+def get_available_disciplines(supabase, direction_id, semester=None):
+    """Получение доступных дисциплин для направления без/по семестров/ам."""
+    discipline_links = supabase.table('disciplines-directions').select('discipline_id').eq('direction_id', direction_id)
+    if semester:
+        discipline_links = discipline_links.eq('semester', semester)
+    # Возвращаем список из id дисциплин
+    return [link['discipline_id'] for link in discipline_links.execute().data]
 
 
 def recommend_courses(supabase, profession_id, direction_id):
-    """Рекомендует курсы для профессиия."""
+    """Рекомендует курсы для профессии."""
     # Получаем доступные дисциплины для направления
     available_discipline_ids = get_available_disciplines(supabase, direction_id)
 
@@ -52,7 +54,7 @@ def recommend_courses_within_discipline(supabase, profession_id, discipline_id, 
     """Рекомендует курсы для профессии в рамках конкретной дисциплины."""
     available_discipline_ids = get_available_disciplines(supabase, direction_id)
     if discipline_id not in available_discipline_ids:
-        print(f'Дисциплина с id {discipline_id} не доступна для направления с id {direction_id}')
+        print(f'Дисциплина с id {discipline_id} недоступна для направления с id {direction_id}')
         return
 
     profession_data = supabase.table('profession_competency_course_links').select(
@@ -65,15 +67,20 @@ def recommend_courses_within_discipline(supabase, profession_id, discipline_id, 
     print_recommended_courses_with_related_records(profession_data, profession_name, discipline_name)
 
 
-def get_top_recommended_courses_for_disciplines(supabase, profession_id, direction_id, discipline_ids):
-    """Получение самого рекомендуемого курса для каждой дисциплины из списка."""
-    # Получаем список доступных дисциплин для направления
-    available_discipline_ids = get_available_disciplines(supabase, direction_id)
+def get_top_recommended_courses_for_disciplines(supabase, profession_id, direction_id, discipline_ids, semester=None):
+    """Получение самого рекомендуемого курса для каждой дисциплины из списка по семестру."""
+    # Получаем список доступных дисциплин для направления по семестру
+    available_discipline_ids = get_available_disciplines(supabase, direction_id, semester)
 
-    # Ограничиваем переданные дисциплины так, чтобы они были связаны с направлением
+    # Ограничиваем переданные дисциплины так, чтобы они были связаны с направлением и указанным семестром
     valid_discipline_ids = [discipline_id for discipline_id in discipline_ids if discipline_id in available_discipline_ids]
 
+    if not valid_discipline_ids:
+        print(f'Выбранные дисциплины недоступны в рамках направления и семестра {semester}')
+        return
+
     response = supabase.table('disciplines').select('id, name').in_('id', valid_discipline_ids).execute()
+
     disciplines = {
         discipline['id']: discipline['name']
         for discipline in response.data
@@ -93,7 +100,8 @@ def get_top_recommended_courses_for_disciplines(supabase, profession_id, directi
         else:
             top_courses[disciplines[discipline_id]] = ('Нет рекомендованных курсов', None)
 
-    print('Лучшие курсы для выбранных дисциплин:')
+    semester = 'Все' if not semester else semester
+    print(f'Лучшие курсы для выбранных дисциплин (семестр: {semester})')
     for discipline_name, course_data in top_courses.items():
         course_name, weight = course_data
         if weight is not None:
@@ -109,13 +117,15 @@ def main():
     discipline_id = int(input('Id of the discipline: '))
     direction_id = int(input('Id of the direction: '))
 
+    semester = int(input('Id of the semester: '))
+
     recommend_courses(supabase, profession_id, direction_id)
     print()
 
     recommend_courses_within_discipline(supabase, profession_id, discipline_id, direction_id)
     print()
 
-    discipline_ids = [8, 14, 32]
+    discipline_ids = [86, 72, 82, 5]
     get_top_recommended_courses_for_disciplines(supabase, profession_id, direction_id, discipline_ids)
 
 
