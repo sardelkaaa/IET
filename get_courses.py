@@ -84,28 +84,30 @@ def get_top_recommended_courses_for_disciplines(supabase, profession_id, directi
         print(f'Выбранные дисциплины недоступны в рамках направления и семестра: {semester}')
         return
 
-    response = supabase.table('disciplines').select('id, name').in_('id', valid_discipline_ids).execute()
-
-    disciplines = {
-        discipline['id']: discipline['name']
-        for discipline in response.data
-    }
+    # Получаем данные о курсах для всех валидных дисциплин за один запрос
+    profession_data = supabase.table('profession_competency_course_links').select(
+        'discipline_id, courses(name), weight'
+    ).eq('profession_id', profession_id).in_('discipline_id', valid_discipline_ids).execute().data
 
     top_courses = {}
+    for record in profession_data:
+        discipline_id = record['discipline_id']
+        if discipline_id not in top_courses:
+            # Берём первый курс для каждой дисциплины, так как данные уже отсортированы
+            top_courses[discipline_id] = (record['courses']['name'], record['weight'])
 
-    for discipline_id in valid_discipline_ids:
-        profession_data = supabase.table('profession_competency_course_links').select(
-            'courses(name), weight'
-        ).eq('profession_id', profession_id).eq('discipline_id', discipline_id).limit(1).execute().data
+    # Получаем имена всех дисциплин одним запросом
+    response = supabase.table('disciplines').select('id, name').in_('id', valid_discipline_ids).execute()
+    disciplines = {discipline['id']: discipline['name'] for discipline in response.data}
 
-        if profession_data:
-            top_course = profession_data[0]['courses']['name']
-            top_weight = profession_data[0]['weight']
-            top_courses[disciplines[discipline_id]] = (top_course, top_weight)
-        else:
-            top_courses[disciplines[discipline_id]] = ('Нет рекомендованных курсов', None)
+    # Формируем итоговый словарь с дисциплинами
+    # Если нет курсов для дисциплины(нет в словаре top_courses), то помечаем это сообщением
+    formatted_top_courses = {
+        disciplines[discipline_id]: top_courses.get(discipline_id, ('Нет рекомендованных курсов', None))
+        for discipline_id in valid_discipline_ids
+    }
 
-    print_top_recommended_courses_for_disciplines(top_courses, semester)
+    print_top_recommended_courses_for_disciplines(formatted_top_courses, semester)
 
 
 
