@@ -132,7 +132,8 @@ def main():
     discipline_id = int(input('Id of the discipline: '))
     direction_id = int(input('Id of the direction: '))
 
-    semester = int(input('Id of the semester: '))
+    semester_input = input('Id of the semester: ')
+    semester = int(semester_input) if semester_input else None
 
     recommend_courses(supabase, profession_id, direction_id)
     print()
