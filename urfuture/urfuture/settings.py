@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'professions.apps.ProfessionsConfig',
     'disciplines.apps.DisciplinesConfig',
     'directions.apps.DirectionsConfig',
+    'recommendations.apps.RecommendationsConfig'
 ]
 
 MIDDLEWARE = [
