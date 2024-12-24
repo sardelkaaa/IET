@@ -15,3 +15,6 @@ class ProfessionCompetencyCourseLinks(models.Model):
     class Meta:
         managed = False
         db_table = 'profession_competency_course_links'
+
+    def __str__(self):
+        return f'Дисциплина: {self.discipline} Курс: {self.discipline} Профессия: {self.profession} Вес: {self.weight}'
