@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from models_app.models import Directions
+from directions.models import Directions
 
 
 class Student(AbstractUser):
