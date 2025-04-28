@@ -4,6 +4,19 @@ from directions.models import Directions
 
 
 class Student(AbstractUser):
+    username = None
+    email = models.EmailField(
+        'Email',
+        unique=True,
+        blank=False,
+        null=False
+    )
+    patronymic = models.CharField(
+        'Отчество',
+        max_length=150,
+        blank=False,
+        null=False
+    )
     direction = models.ForeignKey(
         Directions,
         on_delete=models.SET_NULL,
@@ -13,5 +26,8 @@ class Student(AbstractUser):
         verbose_name='Направление'
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
     def __str__(self):
-        return f'{self.first_name} {self.last_name}'
+        return f'{self.first_name} {self.patronymic or ""} {self.last_name}'.strip()
