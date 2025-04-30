@@ -23,7 +23,7 @@ class BestCoursesAPIView(APIView):
                 profession_id=profession,
                 discipline__disciplinesdirections__direction_id=direction
             )
-            .annotate(        # добавляем номер семестра прямо в результаты
+            .annotate(
                 semester=F('discipline__disciplinesdirections__semester')
             )
             .select_related('course', 'discipline')
