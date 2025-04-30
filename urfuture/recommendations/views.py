@@ -1,3 +1,65 @@
-from django.shortcuts import render
+from django.db.models import F
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import permissions
+from recommendations.models import ProfessionCompetencyCourseLink as PCCL
 
-# Create your views here.
+
+class BestCoursesAPIView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        profession = user.profession_id
+        direction = user.direction_id
+        if not profession or not direction:
+            return Response([])
+
+        semester_param = request.query_params.get('semester')
+
+        qs = (
+            PCCL.objects
+            .filter(
+                profession_id=profession,
+                discipline__disciplinesdirections__direction_id=direction
+            )
+            .annotate(        # добавляем номер семестра прямо в результаты
+                semester=F('discipline__disciplinesdirections__semester')
+            )
+            .select_related('course', 'discipline')
+            .order_by('discipline_id', '-weight')
+            .distinct('discipline_id')
+        )
+
+        if semester_param:
+            qs = qs.filter(
+                discipline__disciplinesdirections__semester=semester_param
+            )
+            data = [
+                {
+                    "discipline": rec.discipline.name,
+                    "course":     rec.course.name,
+                    "weight":     rec.weight,
+                }
+                for rec in qs
+            ]
+            data.sort(key=lambda item: item["weight"], reverse=True)
+            return Response(data)
+
+        grouped = {}
+        for rec in qs:
+            sem = rec.semester
+            grouped.setdefault(sem, []).append({
+                "discipline": rec.discipline.name,
+                "course":     rec.course.name,
+                "weight":     rec.weight,
+            })
+
+        response = [
+            {
+                "semester": sem,
+                "courses": sorted(items, key=lambda x: x["weight"], reverse=True)
+            }
+            for sem, items in sorted(grouped.items())
+        ]
+        return Response(response)
