@@ -163,5 +163,6 @@ cython_debug/
 *.DS_Store
 .DS_Store
 ../.DS_Store
+../.DS_Store
 
 find_in_table.py
