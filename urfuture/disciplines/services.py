@@ -1,4 +1,4 @@
-from .models import DisciplinesDirections, Disciplines
+from .models import DisciplinesDirections, Discipline
 
 
 def get_available_disciplines(direction_id, semester=None):
@@ -11,7 +11,7 @@ def get_available_disciplines(direction_id, semester=None):
     
     # Извлекаем дисциплины, связанные с направлением
     discipline_ids = disciplines_directions.values_list('discipline_id', flat=True)
-    return Disciplines.objects.filter(id__in=discipline_ids)
+    return Discipline.objects.filter(id__in=discipline_ids)
 
 
 def get_disciplines_for_direction(direction_id, semester=None):

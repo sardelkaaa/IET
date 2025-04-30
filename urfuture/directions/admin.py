@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Directions
+from .models import Direction
 
-admin.site.register(Directions)
+admin.site.register(Direction)

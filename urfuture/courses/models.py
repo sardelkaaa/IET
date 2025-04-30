@@ -1,17 +1,17 @@
 from django.db import models
-from disciplines.models import Disciplines
-from directions.models import Directions
+from disciplines.models import Discipline
+from directions.models import Direction
 
 
-class Courses(models.Model):
+class Course(models.Model):
     id = models.BigIntegerField(primary_key=True)
     name = models.TextField()
     description = models.TextField(blank=True, null=True)
     knowledge = models.TextField(blank=True, null=True)
     skills = models.TextField(blank=True, null=True)
-    discipline = models.ForeignKey(Disciplines, models.DO_NOTHING)
+    discipline = models.ForeignKey(Discipline, models.DO_NOTHING)
     tags = models.TextField(blank=True, null=True)
-    direction = models.ForeignKey(Directions, models.DO_NOTHING)
+    direction = models.ForeignKey(Direction, models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -24,7 +24,7 @@ class Courses(models.Model):
         return self.name
 
 
-class Competencies(models.Model):
+class Competency(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
     tags = models.TextField(blank=True, null=True)

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Professions(models.Model):
+class Profession(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
     description = models.TextField(blank=True, null=True)

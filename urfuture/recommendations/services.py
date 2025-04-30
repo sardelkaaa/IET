@@ -1,4 +1,4 @@
-from .models import ProfessionCompetencyCourseLinks
+from .models import ProfessionCompetencyCourseLink
 from disciplines.services import get_available_disciplines
 
 
@@ -7,7 +7,7 @@ def recommend_courses(profession_id, direction_id):
     Рекомендует курсы для профессии.
     """
     available_disciplines = get_available_disciplines(direction_id)
-    recommended_courses = ProfessionCompetencyCourseLinks.objects.filter(
+    recommended_courses = ProfessionCompetencyCourseLink.objects.filter(
         profession__id=profession_id,
         discipline__in=available_disciplines
     ).select_related('course', 'competency', 'discipline')
@@ -22,7 +22,7 @@ def recommend_courses_within_discipline(profession_id, discipline_id, direction_
     if not available_disciplines.filter(id=discipline_id).exists():
         return None
 
-    recommended_courses = ProfessionCompetencyCourseLinks.objects.filter(
+    recommended_courses = ProfessionCompetencyCourseLink.objects.filter(
         profession__id=profession_id,
         discipline__id=discipline_id
     ).select_related('course', 'competency')
@@ -38,7 +38,7 @@ def get_top_recommended_courses_for_disciplines(profession_id, direction_id, dis
 
     top_courses = {}
 
-    recommended_courses = ProfessionCompetencyCourseLinks.objects.filter(
+    recommended_courses = ProfessionCompetencyCourseLink.objects.filter(
         profession__id=profession_id,
         discipline__id__in=valid_discipline_ids
     ).select_related('discipline', 'course')

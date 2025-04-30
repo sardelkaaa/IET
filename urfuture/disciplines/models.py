@@ -1,8 +1,8 @@
 from django.db import models
-from directions.models import Directions
+from directions.models import Direction
 
 
-class Disciplines(models.Model):
+class Discipline(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
     description = models.TextField(blank=True, null=True)
@@ -20,8 +20,8 @@ class Disciplines(models.Model):
 
 class DisciplinesDirections(models.Model):
     id = models.BigAutoField(primary_key=True)
-    discipline = models.ForeignKey(Disciplines, models.DO_NOTHING)
-    direction = models.ForeignKey(Directions, models.DO_NOTHING, blank=True, null=True)
+    discipline = models.ForeignKey(Discipline, models.DO_NOTHING)
+    direction = models.ForeignKey(Direction, models.DO_NOTHING, blank=True, null=True)
     semester = models.BigIntegerField()
 
     class Meta:

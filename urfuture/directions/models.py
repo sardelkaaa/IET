@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Directions(models.Model):
+class Direction(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
 

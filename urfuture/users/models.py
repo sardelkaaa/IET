@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from directions.models import Directions
+from directions.models import Direction
+from professions.models import Profession
 
 
 class Student(AbstractUser):
@@ -18,7 +19,7 @@ class Student(AbstractUser):
         null=False
     )
     direction = models.ForeignKey(
-        Directions,
+        Direction,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

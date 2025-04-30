@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import Courses, Competencies
+from .models import Course, Competency
 
-admin.site.register((Courses, Competencies))
+admin.site.register((Course, Competency))
