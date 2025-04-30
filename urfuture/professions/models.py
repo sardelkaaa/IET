@@ -10,7 +10,6 @@ class Profession(models.Model):
     tags = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'professions'
         verbose_name = 'Profession'
         verbose_name_plural = 'Professions'

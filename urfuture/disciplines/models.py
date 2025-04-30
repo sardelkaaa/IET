@@ -8,7 +8,6 @@ class Discipline(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'disciplines'
         verbose_name = 'Discipline'
         verbose_name_plural = 'Disciplines'
@@ -20,10 +19,9 @@ class Discipline(models.Model):
 
 class DisciplinesDirections(models.Model):
     id = models.BigAutoField(primary_key=True)
-    discipline = models.ForeignKey(Discipline, models.DO_NOTHING)
-    direction = models.ForeignKey(Direction, models.DO_NOTHING, blank=True, null=True)
+    discipline = models.ForeignKey(Discipline, on_delete=models.SET_NULL, blank=True, null=True)
+    direction = models.ForeignKey(Direction, on_delete=models.SET_NULL, blank=True, null=True)
     semester = models.BigIntegerField()
 
     class Meta:
-        managed = False
         db_table = 'disciplines-directions'

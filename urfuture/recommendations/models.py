@@ -6,14 +6,13 @@ from courses.models import Competency, Course
 
 class ProfessionCompetencyCourseLink(models.Model):
     id = models.BigAutoField(primary_key=True)
-    profession = models.ForeignKey(Profession, models.DO_NOTHING)
-    competency = models.ForeignKey(Competency, models.DO_NOTHING)
-    course = models.ForeignKey(Course, models.DO_NOTHING)
+    profession = models.ForeignKey(Profession, on_delete=models.SET_NULL, null=True, blank=True)
+    competency = models.ForeignKey(Competency, on_delete=models.SET_NULL, null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, blank=True)
     weight = models.IntegerField()
-    discipline = models.ForeignKey(Discipline, models.DO_NOTHING)
+    discipline = models.ForeignKey(Discipline, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
-        managed = False
         db_table = 'profession_competency_course_links'
 
     def __str__(self):

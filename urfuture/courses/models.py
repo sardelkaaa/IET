@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 from disciplines.models import Discipline
 from directions.models import Direction
 
@@ -9,12 +10,17 @@ class Course(models.Model):
     description = models.TextField(blank=True, null=True)
     knowledge = models.TextField(blank=True, null=True)
     skills = models.TextField(blank=True, null=True)
-    discipline = models.ForeignKey(Discipline, models.DO_NOTHING)
+    discipline = models.ForeignKey(Discipline, on_delete=models.DO_NOTHING, null=True, blank=True)
     tags = models.TextField(blank=True, null=True)
-    direction = models.ForeignKey(Direction, models.DO_NOTHING)
+    directions = ArrayField(
+        base_field=models.IntegerField(),
+        blank=True,
+        null=True,
+        db_column='direction_id',
+        help_text='Список ID направлений'
+    )
 
     class Meta:
-        managed = False
         db_table = 'courses'
         verbose_name = 'Course'
         verbose_name_plural = 'Courses'
@@ -30,7 +36,6 @@ class Competency(models.Model):
     tags = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'competencies'
         verbose_name = 'Competency'
         verbose_name_plural = 'Competencies'

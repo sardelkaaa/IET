@@ -6,7 +6,6 @@ class Direction(models.Model):
     name = models.TextField()
 
     class Meta:
-        managed = False
         db_table = 'directions'
         verbose_name = 'Direction'
         verbose_name_plural = 'Directions'
