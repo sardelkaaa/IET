@@ -3,6 +3,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.validators import UniqueValidator
+from professions.models import Profession
 
 Student = get_user_model()
 
@@ -15,7 +16,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
     access = serializers.CharField(read_only=True)
     refresh = serializers.CharField(read_only=True)
-    patronymic = serializers.CharField(required=True, allow_blank=False, max_length=150)
+    patronymic = serializers.CharField(
+        required=True, allow_blank=False, max_length=150)
     email = serializers.EmailField(
         write_only=True,
         validators=[UniqueValidator(queryset=Student.objects.all())]
@@ -23,7 +25,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('id', 'first_name', 'last_name', 'patronymic', 'email', 'direction', 'password', 'access', 'refresh')
+        fields = ('id', 'first_name', 'last_name', 'patronymic',
+                  'email', 'direction', 'password', 'access', 'refresh')
 
     def create(self, validated_data):
         email = validated_data.pop('email')
@@ -45,3 +48,15 @@ class RegisterSerializer(serializers.ModelSerializer):
         tokens = getattr(instance, '_tokens', {})
         data.update(tokens)
         return data
+
+
+class ProfessionSelectSerializer(serializers.ModelSerializer):
+    profession = serializers.PrimaryKeyRelatedField(
+        queryset=Profession.objects.all(),
+        required=True,
+        help_text='ID выбранной профессии'
+    )
+
+    class Meta:
+        model = Student
+        fields = ('profession',)
