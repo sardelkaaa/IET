@@ -26,6 +26,14 @@ class Student(AbstractUser):
         related_name='students',
         verbose_name='Направление'
     )
+    profession = models.ForeignKey(
+        Profession,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='students',
+        verbose_name='Профессия'
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
