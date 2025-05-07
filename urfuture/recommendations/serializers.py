@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from courses.serializers import CourseSerializer
 
 
 class BestCourseSerializer(serializers.Serializer):
