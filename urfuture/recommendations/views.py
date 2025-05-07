@@ -1,13 +1,10 @@
 from django.db.models import F
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import permissions
 from recommendations.models import ProfessionCompetencyCourseLink as PCCL
 
 
 class BestCoursesAPIView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
     def get(self, request):
         user = request.user
         profession = user.profession_id
@@ -43,7 +40,6 @@ class BestCoursesAPIView(APIView):
                 }
                 for rec in qs
             ]
-            data.sort(key=lambda item: item["weight"], reverse=True)
             return Response(data)
 
         grouped = {}
@@ -58,7 +54,7 @@ class BestCoursesAPIView(APIView):
         response = [
             {
                 "semester": sem,
-                "courses": sorted(items, key=lambda x: x["weight"], reverse=True)
+                "courses": items
             }
             for sem, items in sorted(grouped.items())
         ]
