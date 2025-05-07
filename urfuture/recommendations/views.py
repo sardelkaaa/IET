@@ -3,12 +3,29 @@ from disciplines.models import DisciplinesDirections
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from recommendations.models import ProfessionCompetencyCourseLink as PCCL
+from professions.models import Profession
+from rest_framework import status
 
 
 class BestCoursesByDisciplineAPIView(APIView):
     def get(self, request):
         user = request.user
-        profession = user.profession_id
+        prof_param = request.query_params.get('profession')
+        if prof_param is not None:
+            try:
+                profession = int(prof_param)
+            except ValueError:
+                return Response(
+                    {"detail": "Invalid profession ID"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if not Profession.objects.filter(id=profession).exists():
+                return Response(
+                    {"detail": "Profession not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+        else:
+            profession = user.profession_id
         direction = user.direction_id
         semester = request.query_params.get('semester')
         if not profession or not direction:
