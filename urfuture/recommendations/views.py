@@ -1,4 +1,4 @@
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Subquery, F
 from disciplines.models import DisciplinesDirections
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -29,9 +29,7 @@ class BestCoursesByDisciplineAPIView(APIView):
             weight=Subquery(best_link.values('weight')[:1])
         )
 
-        # Build JSON response
         if semester is not None:
-            # single semester: flat list
             data = [
                 {
                     "discipline": dd.discipline.name,
@@ -43,7 +41,6 @@ class BestCoursesByDisciplineAPIView(APIView):
             data.sort(key=lambda x: (-(x["weight"] or 0), x["discipline"]))
             return Response(data)
 
-        # multi-semester: group by semester
         grouped = {}
         for dd in results:
             sem = dd.semester
@@ -58,3 +55,39 @@ class BestCoursesByDisciplineAPIView(APIView):
             items.sort(key=lambda x: (-(x["weight"] or 0), x["discipline"]))
             response.append({"semester": sem, "courses": items})
         return Response(response)
+
+
+class BestCoursesAPIView(APIView):
+    def get(self, request):
+        user = request.user
+        profession = user.profession_id
+        direction = user.direction_id
+
+        if not profession or not direction:
+            return Response([])
+
+        qs = (
+            PCCL.objects
+            .filter(
+                profession_id=profession,
+                discipline__disciplinesdirections__direction_id=direction
+            )
+            .annotate(
+                semester=F('discipline__disciplinesdirections__semester')
+            )
+            .select_related('course', 'discipline')
+            .order_by('-weight')[:5]
+        )
+
+        data = [
+            {
+                "course_id":  rec.course.id,
+                "course":     rec.course.name,
+                "discipline": rec.discipline.name,
+                "semester":   rec.semester,
+                "weight":     rec.weight,
+            }
+            for rec in qs
+        ]
+
+        return Response(data)

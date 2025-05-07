@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import BestCoursesByDisciplineAPIView
+from .views import BestCoursesByDisciplineAPIView, BestCoursesAPIView
 
 urlpatterns = [
-    path('best-courses/by-discipline/', BestCoursesByDisciplineAPIView.as_view(), name='best-courses'),
+    path('', BestCoursesAPIView.as_view(), name='recommendations-list'),
+    path('by-discipline/', BestCoursesByDisciplineAPIView.as_view(), name='recommendations-by-discipline'),
 ]
