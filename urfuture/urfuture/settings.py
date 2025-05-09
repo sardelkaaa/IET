@@ -50,8 +50,11 @@ INSTALLED_APPS = [
     'drf_spectacular'
 ]
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "UrFuture API",
+}
+
 REST_FRAMEWORK = {
-    
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],

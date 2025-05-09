@@ -1,8 +1,10 @@
 from rest_framework import generics
 from .models import DisciplinesDirections
 from .serializers import DisciplineSerializer
+from api_docs.disciplines import disciplines_list_doc
 
 
+@disciplines_list_doc
 class MyDirectionDisciplinesAPIView(generics.ListAPIView):
     serializer_class = DisciplineSerializer
 

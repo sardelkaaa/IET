@@ -5,8 +5,10 @@ from rest_framework.response import Response
 from recommendations.models import ProfessionCompetencyCourseLink as PCCL
 from professions.models import Profession
 from rest_framework import status
+from api_docs.recommendations import recommendations_list_schema, best_courses_by_discipline_schema
 
 
+@best_courses_by_discipline_schema
 class BestCoursesByDisciplineAPIView(APIView):
     def get(self, request):
         user = request.user
@@ -74,6 +76,7 @@ class BestCoursesByDisciplineAPIView(APIView):
         return Response(response)
 
 
+@recommendations_list_schema
 class BestCoursesAPIView(APIView):
     def get(self, request):
         user = request.user
