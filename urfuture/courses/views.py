@@ -1,9 +1,8 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from django.db.models import Min, Max, Q
-from api_docs.courses import courses_list_schema
-
+from api_docs.courses import courses_list_schema, course_detail_schema
 from .models import Course
-from .serializers import CourseSerializer
+from .serializers import CourseSerializer, CourseDetailSerializer
 
 
 @courses_list_schema
@@ -18,17 +17,20 @@ class CourseListAPIView(generics.ListAPIView):
 
         qs = Course.objects.filter(
             Q(directions__contains=[direction_id]) |
-            Q(directions__isnull=True, discipline__disciplinesdirections__direction_id=direction_id)
+            Q(directions__isnull=True,
+              discipline__disciplinesdirections__direction_id=direction_id)
         )
 
         qs = qs.annotate(
             min_sem=Min(
                 'discipline__disciplinesdirections__semester',
-                filter=Q(discipline__disciplinesdirections__direction_id=direction_id)
+                filter=Q(
+                    discipline__disciplinesdirections__direction_id=direction_id)
             ),
             max_sem=Max(
                 'discipline__disciplinesdirections__semester',
-                filter=Q(discipline__disciplinesdirections__direction_id=direction_id)
+                filter=Q(
+                    discipline__disciplinesdirections__direction_id=direction_id)
             )
         )
 
@@ -44,3 +46,9 @@ class CourseListAPIView(generics.ListAPIView):
                 return Course.objects.none()
 
         return qs.select_related('discipline').distinct()
+
+@course_detail_schema
+class CourseDetailAPIView(generics.RetrieveAPIView):
+    queryset = Course.objects.all()
+    serializer_class = CourseDetailSerializer
+    permission_classes = (permissions.AllowAny,)

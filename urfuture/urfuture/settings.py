@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "UrFuture API",
+    "VERSION": "1.0.0",
 }
 
 REST_FRAMEWORK = {

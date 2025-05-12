@@ -1,6 +1,6 @@
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiResponse, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
-from courses.serializers import CourseSerializer
+from courses.serializers import CourseSerializer, CourseDetailSerializer
 
 courses_list_schema = extend_schema(
     parameters=[
@@ -8,7 +8,7 @@ courses_list_schema = extend_schema(
             name='semester',
             type=OpenApiTypes.INT,
             location=OpenApiParameter.QUERY,
-            description='Filter courses by semester',
+            description='Фильтр курсов по семестру',
             required=False,
         ),
     ],
@@ -62,4 +62,66 @@ courses_list_schema = extend_schema(
         ],
     ),
     tags=['courses'],
+    summary="Список всех курсов для направления пользователя",
+    description="Возвращает список курсов, дисциплину и семестр",
+)
+
+course_detail_schema = extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name='id',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID курса',
+            required=True,
+        ),
+    ],
+    auth=[],
+    responses={
+        200: OpenApiResponse(
+            response=CourseDetailSerializer,
+            examples=[
+                OpenApiExample(
+                    'Course detail',
+                    value={
+                        "id": 185,
+                        "name": "Прикладное программирование на TypeScript (ArtSofte, RUS, TK)",
+                        "description": "Полное описание курса по прикладному программированию на TypeScript.",
+                        "knowledge": [
+                            "Основы TypeScript",
+                            "Типизация",
+                            "Работа с API"
+                        ],
+                        "skills": [
+                            "Разработка на TypeScript",
+                            "Дебаггинг",
+                            "Тестирование"
+                        ],
+                        "tags": [
+                            "программирование",
+                            "TypeScript",
+                            "frontend"
+                        ]
+                    },
+                    response_only=True,
+                    status_codes=['200'],
+                ),
+            ],
+        ),
+        404: OpenApiResponse(
+            response=OpenApiTypes.OBJECT,
+            description="Course not found.",
+            examples=[
+                OpenApiExample(
+                    'Not found',
+                    value={"detail": "No Course matches the given query."},
+                    response_only=True,
+                    status_codes=['404'],
+                ),
+            ],
+        ),
+    },
+    tags=['courses'],
+    summary="Подробная информация о курсе",
+    description="Возвращает все поля курса: описание, знания, навыки и теги.",
 )
