@@ -24,7 +24,7 @@ class MyTokenRefreshView(TokenRefreshView):
 @profile_schema
 class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfessionSelectSerializer
-    http_method_names = ['get', 'put', 'options', 'head']
+    http_method_names = ['get', 'patch', 'options', 'head']
 
     def get_object(self):
         return self.request.user

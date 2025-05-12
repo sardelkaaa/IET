@@ -56,7 +56,12 @@ class ProfessionSelectSerializer(serializers.ModelSerializer):
         required=True,
         help_text='ID выбранной профессии'
     )
+    profession_name = serializers.CharField(
+        source='profession.name',
+        read_only=True,
+        help_text='Название выбранной профессии'
+    )
 
     class Meta:
         model = Student
-        fields = ('profession',)
+        fields = ('profession', 'profession_name')

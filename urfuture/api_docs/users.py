@@ -178,7 +178,8 @@ profession_get_example = OpenApiExample(
     summary='Текущая профессия пользователя',
     response_only=True,
     value={
-        "profession": 4
+        "profession": 4,
+        "profession_name": "Web-программист"
     }
 )
 
