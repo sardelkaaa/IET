@@ -1,8 +1,12 @@
 from rest_framework import generics
+from django.db.models import Min, Max, Q
+from api_docs.courses import courses_list_schema
+
 from .models import Course
 from .serializers import CourseSerializer
 
 
+@courses_list_schema
 class CourseListAPIView(generics.ListAPIView):
     serializer_class = CourseSerializer
 
@@ -12,4 +16,31 @@ class CourseListAPIView(generics.ListAPIView):
         if not direction_id:
             return Course.objects.none()
 
-        return Course.objects.filter(directions__contains=[direction_id])
+        qs = Course.objects.filter(
+            Q(directions__contains=[direction_id]) |
+            Q(directions__isnull=True, discipline__disciplinesdirections__direction_id=direction_id)
+        )
+
+        qs = qs.annotate(
+            min_sem=Min(
+                'discipline__disciplinesdirections__semester',
+                filter=Q(discipline__disciplinesdirections__direction_id=direction_id)
+            ),
+            max_sem=Max(
+                'discipline__disciplinesdirections__semester',
+                filter=Q(discipline__disciplinesdirections__direction_id=direction_id)
+            )
+        )
+
+        semester = self.request.query_params.get('semester')
+        if semester is not None:
+            try:
+                sem = int(semester)
+                qs = qs.filter(
+                    discipline__disciplinesdirections__direction_id=direction_id,
+                    discipline__disciplinesdirections__semester=sem
+                )
+            except ValueError:
+                return Course.objects.none()
+
+        return qs.select_related('discipline').distinct()

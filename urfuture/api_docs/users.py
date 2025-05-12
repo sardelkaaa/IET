@@ -204,7 +204,7 @@ profile_resp_401 = OpenApiExample(
 profile_schema = extend_schema(
     summary='Просмотр и изменение профессии пользователя',
     description='Позволяет получить текущую профессию или обновить ее.',
-    tags=["User's Profession"],
+    tags=["user's profession"],
     request={
         'PATCH': ProfessionSelectSerializer
     },
