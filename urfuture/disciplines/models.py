@@ -6,6 +6,7 @@ class Discipline(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField()
     description = models.TextField(blank=True, null=True)
+    category = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'disciplines'
