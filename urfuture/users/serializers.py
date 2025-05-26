@@ -65,3 +65,23 @@ class ProfessionSelectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = ('profession', 'profession_name')
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    academic_group = serializers.CharField(
+        source='direction.name',
+        read_only=True,
+        help_text="Академическая группа"
+    )
+
+    class Meta:
+        model = Student
+        fields = (
+            'id',
+            'last_name',
+            'first_name',
+            'patronymic',
+            'email',
+            'academic_group'
+        )
+        read_only_fields = ('email',)

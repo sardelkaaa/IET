@@ -1,8 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
 from drf_spectacular.types import OpenApiTypes
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
-from users.serializers import RegisterSerializer, ProfessionSelectSerializer
-
+from users.serializers import RegisterSerializer, ProfessionSelectSerializer, UserProfileSerializer
 
 register_req = OpenApiExample(
     'Register request',
@@ -225,4 +224,52 @@ profile_schema = extend_schema(
             examples=[profile_resp_401],    
         ),
     },
+)
+
+user_profile_example = OpenApiExample(
+    'User profile',
+    summary='Данные профиля пользователя',
+    response_only=True,
+    value={
+        "id": 1,
+        "last_name": "Иванов",
+        "first_name": "Петр",
+        "patronymic": "Сергеевич",
+        "email": "ivanov@urfu.me",
+        "academic_group": "ИТС-2023"
+    }
+)
+
+user_profile_401 = OpenApiExample(
+    'Unauthorized error',
+    summary='Неавторизованный запрос',
+    response_only=True,
+    value={
+        "detail": "Authentication credentials were not provided."
+    }
+)
+
+user_profile_schema = extend_schema(
+    summary='Получение данных профиля',
+    description=(
+        'Возвращает основные данные текущего авторизованного пользователя:\n'
+        '- ФИО\n'
+        '- Основной email\n'
+        '- Академическая группа\n'
+        'Для доступа требуется JWT-токен в заголовке Authorization'
+    ),
+    responses={
+        200: OpenApiResponse(
+            response=UserProfileSerializer,
+            description='Данные профиля',
+            examples=[user_profile_example],
+        ),
+        401: OpenApiResponse(
+            response=OpenApiTypes.OBJECT,
+            description='Неавторизованный доступ',
+            examples=[user_profile_401],
+        ),
+    },
+    methods=['GET'],
+    tags=['user profile'],
 )

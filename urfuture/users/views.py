@@ -1,8 +1,8 @@
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
-from .serializers import RegisterSerializer, EmailTokenObtainPairSerializer, ProfessionSelectSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from .serializers import RegisterSerializer, EmailTokenObtainPairSerializer, ProfessionSelectSerializer, UserProfileSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from api_docs.users import register_schema, login_schema, refresh_schema, profile_schema
+from api_docs.users import register_schema, login_schema, refresh_schema, profile_schema, user_profile_schema
 
 
 @register_schema
@@ -25,6 +25,14 @@ class MyTokenRefreshView(TokenRefreshView):
 class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfessionSelectSerializer
     http_method_names = ['get', 'patch', 'options', 'head']
+
+    def get_object(self):
+        return self.request.user
+
+@user_profile_schema
+class UserProfileAPIView(generics.RetrieveAPIView):
+    serializer_class = UserProfileSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         return self.request.user
