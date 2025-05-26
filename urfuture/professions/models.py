@@ -8,6 +8,7 @@ class Profession(models.Model):
     knowledge = models.TextField(blank=True, null=True)
     skills = models.TextField(blank=True, null=True)
     tags = models.TextField(blank=True, null=True)
+    category = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'professions'

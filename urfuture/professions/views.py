@@ -10,6 +10,13 @@ class ProfessionListAPIView(generics.ListAPIView):
     serializer_class = ProfessionSerializer
     permission_classes = (permissions.AllowAny,)
 
+    def get_queryset(self):
+        queryset = Profession.objects.all()
+        category = self.request.query_params.get('category')
+        if category:
+            queryset = queryset.filter(category=category)
+        return queryset
+
 
 @professions_detail_schema
 class ProfessionDetailAPIView(generics.RetrieveAPIView):
