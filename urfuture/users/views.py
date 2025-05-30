@@ -54,6 +54,7 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
         user = serializer.save()
         cache = caches['default']
         cache.delete_pattern('*user_profession*')
+        cache.delete_pattern('*user_profile*')
         cache.delete_pattern('*best_courses*')
         cache.delete_pattern('*best_courses_by_discipline*')
 
