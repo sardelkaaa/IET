@@ -236,7 +236,7 @@ user_profile_example = OpenApiExample(
         "first_name": "Петр",
         "patronymic": "Сергеевич",
         "email": "ivanov@urfu.me",
-        "academic_group": "ИТС-2023"
+        "academic_group": "ИТС-2023",
         "direction": "Программная инженерия"
     }
 )
