@@ -5,7 +5,7 @@ from api_docs.professions import professions_list_schema, professions_detail_sch
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
-@method_decorator(cache_page(60 * 60 * 12), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 12), name='dispatch', key_prefix='professions_list')
 @professions_list_schema
 class ProfessionListAPIView(generics.ListAPIView):
     queryset = Profession.objects.all()
@@ -19,7 +19,7 @@ class ProfessionListAPIView(generics.ListAPIView):
             queryset = queryset.filter(category=category)
         return queryset
 
-@method_decorator(cache_page(60 * 60 * 12), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 12), name='dispatch', key_prefix='profession_detail')
 @professions_detail_schema
 class ProfessionDetailAPIView(generics.RetrieveAPIView):
     queryset = Profession.objects.all()

@@ -22,8 +22,8 @@ class LoginAPIView(TokenObtainPairView):
 class MyTokenRefreshView(TokenRefreshView):
     pass
 
-@method_decorator(cache_page(60 * 60 * 6), name='dispatch')
 @profile_schema
+@method_decorator(cache_page(60 * 60 * 6), name='dispatch', key_prefix='user_profession')
 class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfessionSelectSerializer
     http_method_names = ['get', 'patch', 'options', 'head']
@@ -31,7 +31,7 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-@method_decorator(cache_page(60 * 60 * 6), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 6), name='dispatch', key_prefix='user_profile')
 @user_profile_schema
 class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
