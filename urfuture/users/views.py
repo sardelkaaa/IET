@@ -6,6 +6,7 @@ from api_docs.users import register_schema, login_schema, refresh_schema, profil
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.core.cache import caches
+from .models import Student
 
 
 @register_schema
@@ -65,5 +66,8 @@ class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        return Student.objects.select_related('direction', 'profession')
+
     def get_object(self):
-        return self.request.user
+        return self.get_queryset().get(pk=self.request.user.pk)
