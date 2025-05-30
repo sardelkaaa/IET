@@ -82,7 +82,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'first_name',
             'patronymic',
             'email',
-            'direction'
+            'direction',
             'academic_group'
         )
         read_only_fields = ('email',)
