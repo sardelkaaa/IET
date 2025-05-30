@@ -34,6 +34,12 @@ class Student(AbstractUser):
         related_name='students',
         verbose_name='Профессия'
     )
+    academic_group = models.CharField(
+        'Академическая группа',
+        max_length=20,
+        blank=True,
+        null=True
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

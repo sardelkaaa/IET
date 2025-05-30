@@ -68,10 +68,10 @@ class ProfessionSelectSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    academic_group = serializers.CharField(
+    direction = serializers.CharField(
         source='direction.name',
         read_only=True,
-        help_text="Академическая группа"
+        help_text="Направление"
     )
 
     class Meta:
