@@ -23,7 +23,7 @@ class MyTokenRefreshView(TokenRefreshView):
     pass
 
 @profile_schema
-@method_decorator(cache_page(60 * 60 * 6), name='dispatch', key_prefix='user_profession')
+@method_decorator(cache_page(60 * 60 * 6, key_prefix='user_profession'), name='dispatch')
 class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfessionSelectSerializer
     http_method_names = ['get', 'patch', 'options', 'head']
@@ -31,7 +31,7 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-@method_decorator(cache_page(60 * 60 * 6), name='dispatch', key_prefix='user_profile')
+@method_decorator(cache_page(60 * 60 * 6, key_prefix='user_profile'), name='dispatch')
 @user_profile_schema
 class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
