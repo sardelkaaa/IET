@@ -6,7 +6,7 @@ from .serializers import CourseSerializer, CourseDetailSerializer
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
-@method_decorator(cache_page(60 * 60 * 12, key_prefix='courses_list'), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 24, key_prefix='courses_list'), name='dispatch')
 @courses_list_schema
 class CourseListAPIView(generics.ListAPIView):
     serializer_class = CourseSerializer
@@ -50,7 +50,7 @@ class CourseListAPIView(generics.ListAPIView):
         return qs.select_related('discipline').distinct()
 
 
-@method_decorator(cache_page(60 * 60 * 12, key_prefix='course_detail'), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 24, key_prefix='course_detail'), name='dispatch')
 @course_detail_schema
 class CourseDetailAPIView(generics.RetrieveAPIView):
     queryset = Course.objects.all()

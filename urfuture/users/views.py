@@ -42,7 +42,7 @@ class MyTokenRefreshView(TokenRefreshView):
 
 
 @profile_schema
-@method_decorator(cache_page(60 * 60 * 6, key_prefix='user_profession'), name='get')
+@method_decorator(cache_page(60 * 60 * 24, key_prefix='user_profession'), name='get')
 class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfessionSelectSerializer
     http_method_names = ['get', 'patch', 'options', 'head']
@@ -58,7 +58,7 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
         cache.delete_pattern('*best_courses_by_discipline*')
 
 
-@method_decorator(cache_page(60 * 60 * 6, key_prefix='user_profile'), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 24, key_prefix='user_profile'), name='dispatch')
 @user_profile_schema
 class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
