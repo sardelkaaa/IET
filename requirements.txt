@@ -9,6 +9,7 @@ certifi==2024.8.30
 deprecation==2.1.0
 Django==5.1.4
 django-cors-headers==4.7.0
+django-redis==5.4.0
 djangorestframework==3.16.0
 djangorestframework_simplejwt==5.5.0
 dotenv==0.9.9
@@ -38,6 +39,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 PyYAML==6.0.2
 realtime==2.0.6
+redis==6.2.0
 referencing==0.36.2
 rpds-py==0.24.0
 six==1.17.0
