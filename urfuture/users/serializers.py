@@ -73,6 +73,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only=True,
         help_text="Направление"
     )
+    profession = serializers.CharField(
+        source='profession.name',
+        read_only=True,
+        help_text="Выбранная профессия"
+    )
 
     class Meta:
         model = Student
@@ -82,6 +87,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'first_name',
             'patronymic',
             'email',
+            'profession',
             'direction',
             'academic_group'
         )
