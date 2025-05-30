@@ -3,8 +3,10 @@ from django.db.models import Min, Max, Q
 from api_docs.courses import courses_list_schema, course_detail_schema
 from .models import Course
 from .serializers import CourseSerializer, CourseDetailSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
-
+@method_decorator(cache_page(60 * 60 * 12), name='dispatch')
 @courses_list_schema
 class CourseListAPIView(generics.ListAPIView):
     serializer_class = CourseSerializer
@@ -47,6 +49,8 @@ class CourseListAPIView(generics.ListAPIView):
 
         return qs.select_related('discipline').distinct()
 
+
+@method_decorator(cache_page(60 * 60 * 12), name='dispatch')
 @course_detail_schema
 class CourseDetailAPIView(generics.RetrieveAPIView):
     queryset = Course.objects.all()

@@ -3,6 +3,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import RegisterSerializer, EmailTokenObtainPairSerializer, ProfessionSelectSerializer, UserProfileSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from api_docs.users import register_schema, login_schema, refresh_schema, profile_schema, user_profile_schema
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 
 @register_schema
@@ -20,7 +22,7 @@ class LoginAPIView(TokenObtainPairView):
 class MyTokenRefreshView(TokenRefreshView):
     pass
 
-
+@method_decorator(cache_page(60 * 60 * 6), name='dispatch')
 @profile_schema
 class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfessionSelectSerializer
@@ -29,6 +31,7 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+@method_decorator(cache_page(60 * 60 * 6), name='dispatch')
 @user_profile_schema
 class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer

@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 
 
-@method_decorator(cache_page(60 * 60 * 2), name='dispatch')
+@method_decorator(cache_page(60 * 60 * 12), name='dispatch')
 @directions_list_schema
 class DirectionListAPIView(generics.ListAPIView):
     queryset = Direction.objects.all()
