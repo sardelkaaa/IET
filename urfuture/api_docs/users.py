@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiResponse
 from drf_spectacular.types import OpenApiTypes
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
-from users.serializers import RegisterSerializer, ProfessionSelectSerializer, UserProfileSerializer
+from users.serializers import RegisterSerializer, ProfessionSelectSerializer, UserProfileSerializer, UserProfileUpdateSerializer
 
 register_req = OpenApiExample(
     'Register request',
@@ -203,7 +203,7 @@ profile_resp_401 = OpenApiExample(
 profile_schema = extend_schema(
     summary='Просмотр и изменение профессии пользователя',
     description='Позволяет получить текущую профессию или обновить ее.',
-    tags=["user's profession"],
+    tags=["user profession"],
     request={
         'PATCH': ProfessionSelectSerializer
     },
@@ -273,5 +273,60 @@ user_profile_schema = extend_schema(
         ),
     },
     methods=['GET'],
+    tags=['user profile'],
+)
+
+update_profile_example = OpenApiExample(
+    'User profile update',
+    summary='Данные профиля после успешного обновления',
+    response_only=True,
+    value={
+        "id": 1,
+        "last_name": "Иванов",
+        "first_name": "Петр",
+        "patronymic": "Сергеевич",
+        "email": "ivanov@urfu.me",
+        "academic_group": "ИТС-2023",
+        "direction": "Программная инженерия",
+        "direction_id": 4,
+    }
+)
+
+user_profile_400_example = OpenApiExample(
+    'Profile update validation error',
+    summary='Ошибки валидации при обновлении профиля',
+    response_only=True,
+    value={
+        "email": ["Enter a valid email address."],
+        "new_password": ["This password is too short."],
+    }
+)
+
+user_profile_update_schema = extend_schema(
+    summary='Обновление данных профиля',
+    description=(
+        'Позволяет обновить поля профиля и при необходимости сменить пароль.\n'
+        'Для смены пароля передайте `current_password`, `new_password`, `new_password_confirm`.\n'
+        'Для доступа требуется JWT-токен.'
+    ),
+    request=UserProfileUpdateSerializer,
+    responses={
+        200: OpenApiResponse(
+            response=UserProfileSerializer,
+            description='Данные профиля после успешного обновления',
+            examples=[update_profile_example],
+        ),
+        400: OpenApiResponse(
+            response=OpenApiTypes.OBJECT,
+            description='Ошибки валидации при обновлении профиля',
+            examples=[user_profile_400_example],
+        ),
+        401: OpenApiResponse(
+            response=OpenApiTypes.OBJECT,
+            description='Неавторизованный доступ',
+            examples=[user_profile_401],
+        ),
+    },
+    methods=['PATCH'],
     tags=['user profile'],
 )
