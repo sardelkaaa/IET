@@ -69,7 +69,7 @@ class ProfessionSelectSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
     direction = serializers.CharField(
-        source='direction.name',
+        source='direction.name_text',
         read_only=True,
         help_text="Направление"
     )
