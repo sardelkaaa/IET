@@ -73,6 +73,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only=True,
         help_text="Направление"
     )
+    direction_id = serializers.PrimaryKeyRelatedField(
+        source='direction',
+        read_only=True,
+        help_text="ID направления"
+    )
     profession = serializers.CharField(
         source='profession.name',
         read_only=True,
@@ -88,6 +93,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'patronymic',
             'email',
             'profession',
+            'direction_id',
             'direction',
             'academic_group'
         )
