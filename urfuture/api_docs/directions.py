@@ -26,3 +26,26 @@ directions_list_schema = extend_schema(
         )
     ]
 )
+
+direction_detail_response = OpenApiResponse(
+    response=DirectionSerializer,
+    description="Детальная информация о направлении"
+)
+
+directions_detail_schema = extend_schema(
+    summary="Получить детальную информацию о направлении",
+    description="Возвращает полную информацию о направлении по ID",
+    auth=[],
+    responses={200: direction_detail_response},
+    examples=[
+        OpenApiExample(
+            name="Пример детального ответа",
+            value={
+                "id": 3,
+                "name": "09.03.04",
+                "description": "Описание для Программной инженерии",
+                "name_text": "Программная инженерия"
+            }
+        )
+    ]
+)
