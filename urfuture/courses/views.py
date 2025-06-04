@@ -5,11 +5,20 @@ from .models import Course
 from .serializers import CourseSerializer, CourseDetailSerializer
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from rest_framework.pagination import PageNumberPagination
+
+
+class CoursesPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = 'page_size'
+    max_page_size = 30
+
 
 @method_decorator(cache_page(60 * 60 * 24, key_prefix='courses_list'), name='dispatch')
 @courses_list_schema
 class CourseListAPIView(generics.ListAPIView):
     serializer_class = CourseSerializer
+    pagination_class = CoursesPagination
 
     def get_queryset(self):
         user = self.request.user
