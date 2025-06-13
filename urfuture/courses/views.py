@@ -56,7 +56,7 @@ class CourseListAPIView(generics.ListAPIView):
             except ValueError:
                 return Course.objects.none()
 
-        return qs.select_related('discipline').distinct()
+        return qs.select_related('discipline').distinct().order_by('id')
 
 
 @method_decorator(cache_page(60 * 60 * 24, key_prefix='course_detail'), name='dispatch')
