@@ -35,10 +35,10 @@ class BestCoursesByDisciplineAPIView(APIView):
         if not profession or not direction:
             return Response([])
 
-        dd_qs = DisciplinesDirections.objects.filter(direction_id=direction)
+        dd_qs = DisciplinesDirections.objects.filter(direction_id=direction) \
+            .select_related('discipline')
         if semester is not None:
             dd_qs = dd_qs.filter(semester=int(semester))
-        dd_qs = dd_qs.select_related('discipline')
 
         best_link = PCCL.objects.filter(
             profession_id=profession,
@@ -54,6 +54,7 @@ class BestCoursesByDisciplineAPIView(APIView):
             data = [
                 {
                     "discipline": dd.discipline.name,
+                    "discipline_category": dd.discipline.category,
                     "course":     dd.course_name,
                     "weight":     dd.weight
                 }
@@ -67,6 +68,7 @@ class BestCoursesByDisciplineAPIView(APIView):
             sem = dd.semester
             grouped.setdefault(sem, []).append({
                 "discipline": dd.discipline.name,
+                "discipline_category": dd.discipline.category,
                 "course":     dd.course_name,
                 "weight":     dd.weight
             })
