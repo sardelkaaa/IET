@@ -84,6 +84,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         read_only=True,
         help_text="Выбранная профессия"
     )
+    profession_id = serializers.PrimaryKeyRelatedField(
+        source='profession',
+        read_only=True,
+        help_text="ID профессии"
+    )
 
     class Meta:
         model = Student
@@ -93,6 +98,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'first_name',
             'patronymic',
             'email',
+            'profession_id',
             'profession',
             'direction_id',
             'direction',
