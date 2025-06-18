@@ -63,7 +63,8 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
 @method_decorator(
     cache_page(60*60, key_prefix=lambda req: f'user_profile_{req.user.pk}'),
     name='dispatch'
-)@user_profile_schema
+)
+@user_profile_schema
 class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
