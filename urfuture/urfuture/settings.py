@@ -30,6 +30,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "158.160.186.181",
     "urfuture.tech",
+    "app.urfuture.tech",
     "127.0.0.1"
 ]
 
@@ -224,5 +225,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:5175",
     "http://127.0.0.1:5175",
-    "http://app.urfuture.tech"
+    "http://app.urfuture.tech",
+    "https://app.urfuture.tech"
 ]
