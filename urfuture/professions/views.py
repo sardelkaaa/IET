@@ -29,6 +29,21 @@ class ProfessionListAPIView(generics.ListAPIView):
         return queryset
 
 
+@method_decorator(cache_page(60 * 60 * 24, key_prefix='professions_list_no_pagination'), name='dispatch')
+class ProfessionListNoPaginationAPIView(generics.ListAPIView):
+    queryset = Profession.objects.all()
+    serializer_class = ProfessionSerializer
+    permission_classes = (permissions.AllowAny,)
+    pagination_class = None
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        category = self.request.query_params.get('category')
+        if category:
+            qs = qs.filter(category=category)
+        return qs
+
+
 @method_decorator(cache_page(60 * 60 * 24, key_prefix='profession_detail'), name='dispatch')
 @professions_detail_schema
 class ProfessionDetailAPIView(generics.RetrieveAPIView):
