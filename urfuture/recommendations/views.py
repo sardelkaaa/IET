@@ -6,10 +6,7 @@ from recommendations.models import ProfessionCompetencyCourseLink as PCCL
 from professions.models import Profession
 from rest_framework import status
 from api_docs.recommendations import recommendations_list_schema, best_courses_by_discipline_schema
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 
-@method_decorator(cache_page(60 * 60 * 24, key_prefix='best_courses_by_discipline'), name='dispatch')
 @best_courses_by_discipline_schema
 class BestCoursesByDisciplineAPIView(APIView):
     def get(self, request):
@@ -80,7 +77,6 @@ class BestCoursesByDisciplineAPIView(APIView):
         return Response(response)
 
 
-@method_decorator(cache_page(60 * 60 * 24, key_prefix='best_courses'), name='dispatch')
 @recommendations_list_schema
 class BestCoursesAPIView(APIView):
     def get(self, request):
