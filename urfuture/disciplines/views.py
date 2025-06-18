@@ -31,7 +31,8 @@ class MyDirectionDisciplinesAPIView(generics.ListAPIView):
             sem = item['semester']
             entry = {
                 'id': item['id'],
-                'name': item['name']
+                'name': item['name'],
+                'category': item['category']
             }
             grouped.setdefault(sem, []).append(entry)
 
