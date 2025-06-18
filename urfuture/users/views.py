@@ -60,8 +60,10 @@ class UserProfessionUpdateAPIView(generics.RetrieveUpdateAPIView):
         cache.delete_pattern('*best_courses_by_discipline*')
 
 
-@method_decorator(cache_page(60 * 60 * 24, key_prefix='user_profile'), name='dispatch')
-@user_profile_schema
+@method_decorator(
+    cache_page(60*60, key_prefix=lambda req: f'user_profile_{req.user.pk}'),
+    name='dispatch'
+)@user_profile_schema
 class UserProfileAPIView(generics.RetrieveAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = (IsAuthenticated,)
